@@ -24,7 +24,9 @@ const Home = () => {
 
   const [appState, setAppState] = useState<AppState>(start);
   const [turn, setTurn] = useState(0);
-  const [words, setWords] = useState<IWord[]>([...Array(maxTurns)]);
+  const [words, setWords] = useState<IWord[] | undefined[]>([
+    ...Array(maxTurns),
+  ]);
   const [input, setInput] = useState("");
   const [modal, setModal] = useState<null | Result>(null);
 
@@ -33,8 +35,6 @@ const Home = () => {
     newWords[turn] = getFormattedWord(word, solution!);
     setWords(newWords);
   };
-
-  console.log(words);
 
   const nextTurn = () => {
     setInput("");
@@ -98,16 +98,19 @@ const Home = () => {
   }, [appState, input]);
 
   return (
-    <>
+    <div>
       <Head>
         <title>Wordle</title>
       </Head>
+      <header className="p-2">
+        <h1 className="text-2xl font-bold text-center">Wordle-Clone</h1>
+      </header>
       {solutionLoading && <h2>Loading...</h2>}
       {solution && (
         <div>
-          <h2>solution: {solution}</h2>
-          <h2>input: {input}</h2>
-          <Wordle words={words} />
+          <h2 className="absolute bottom-0 right-0">solution: {solution}</h2>
+          {/* <h2>input: {input}</h2> */}
+          <Wordle words={words} turn={turn} input={input} />
         </div>
       )}
       {modal === win && (
@@ -120,7 +123,7 @@ const Home = () => {
           LOSE<button onClick={restartRound}>Restart</button>
         </div>
       )}
-    </>
+    </div>
   );
 };
 export default Home;
