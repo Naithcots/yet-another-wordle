@@ -1,12 +1,14 @@
+import { IWord } from "@/types";
+
 interface Props {
-  words: string[];
+  words: IWord[];
 }
 
 const Wordle = ({ words }: Props) => {
   return (
     <div>
       {words.map((word, idx) => (
-        <div key={idx}>{word || "undefined"}</div>
+        <div key={idx}>{word ? word.word : "undefined"}</div>
       ))}
     </div>
   );

@@ -1,7 +1,8 @@
 import Wordle from "@/components/Wordle/Wordle";
+import getFormattedWord from "@/helpers/getFormattedWord";
 import getWord from "@/helpers/getWord";
 import isAlphabetKey from "@/helpers/isAlphabetKey";
-import { AppState, Result } from "@/types";
+import { AppState, ILetter, IWord, Result, TColor } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import Head from "next/head";
 import { useEffect, useState } from "react";
@@ -13,9 +14,9 @@ const maxTurns = 6;
 const Home = () => {
   const {
     refetch: wordRefetch,
-    error: wordError,
-    isLoading: wordLoading,
-    data: word,
+    error: solutionError,
+    isLoading: solutionLoading,
+    data: solution,
   } = useQuery<string>(["word"], getWord, {
     refetchOnReconnect: false,
     refetchOnWindowFocus: false,
@@ -23,15 +24,17 @@ const Home = () => {
 
   const [appState, setAppState] = useState<AppState>(start);
   const [turn, setTurn] = useState(0);
-  const [words, setWords] = useState([...Array(maxTurns)]);
+  const [words, setWords] = useState<IWord[]>([...Array(maxTurns)]);
   const [input, setInput] = useState("");
   const [modal, setModal] = useState<null | Result>(null);
 
   const addWord = (word: string, turn: number) => {
     const newWords = words;
-    newWords[turn] = word;
+    newWords[turn] = getFormattedWord(word, solution!);
     setWords(newWords);
   };
+
+  console.log(words);
 
   const nextTurn = () => {
     setInput("");
@@ -64,12 +67,16 @@ const Home = () => {
       setInput((prev) => prev.slice(0, -1));
     } else if (key === "enter") {
       console.log("enter");
-      if (input.length !== 5 || words.includes(input)) return;
+      if (
+        input.length !== 5 ||
+        words.map((word) => (word ? word.word : null)).includes(input)
+      )
+        return;
 
       addWord(input, turn);
       nextTurn();
 
-      if (input === word) {
+      if (input === solution) {
         console.log("solution found!");
         finishRound(win);
       } else if (turn === maxTurns - 1) {
@@ -80,8 +87,8 @@ const Home = () => {
   };
 
   useEffect(() => {
-    word && setAppState(inProgress);
-  }, [word]);
+    solution && setAppState(inProgress);
+  }, [solution]);
 
   useEffect(() => {
     appState === inProgress && document.addEventListener("keyup", handleKeyUp);
@@ -95,10 +102,10 @@ const Home = () => {
       <Head>
         <title>Wordle</title>
       </Head>
-      {wordLoading && <h2>Loading...</h2>}
-      {word && (
+      {solutionLoading && <h2>Loading...</h2>}
+      {solution && (
         <div>
-          <h2>solution: {word}</h2>
+          <h2>solution: {solution}</h2>
           <h2>input: {input}</h2>
           <Wordle words={words} />
         </div>
