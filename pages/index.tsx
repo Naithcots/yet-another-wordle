@@ -1,9 +1,11 @@
+import Modal from "@/components/Wordle/Modal";
 import Wordle from "@/components/Wordle/Wordle";
 import getFormattedWord from "@/helpers/getFormattedWord";
 import getWord from "@/helpers/getWord";
 import isAlphabetKey from "@/helpers/isAlphabetKey";
-import { AppState, ILetter, IWord, Result, TColor } from "@/types";
+import { AppState, IWord, Result } from "@/types";
 import { useQuery } from "@tanstack/react-query";
+import { AnimatePresence, motion } from "framer-motion";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 
@@ -43,7 +45,8 @@ const Home = () => {
 
   const finishRound = (result: Result) => {
     setAppState(finish);
-    setModal(result);
+
+    setTimeout(() => setModal(result), 1250);
   };
 
   const restartRound = () => {
@@ -105,24 +108,31 @@ const Home = () => {
       <header className="p-2">
         <h1 className="text-2xl font-bold text-center">Wordle-Clone</h1>
       </header>
+
       {solutionLoading && <h2>Loading...</h2>}
       {solution && (
-        <div>
-          <h2 className="absolute bottom-0 right-0">solution: {solution}</h2>
-          {/* <h2>input: {input}</h2> */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+        >
           <Wordle words={words} turn={turn} input={input} />
-        </div>
+        </motion.div>
       )}
-      {modal === win && (
-        <div>
-          WIN<button onClick={restartRound}>Restart</button>
-        </div>
+      {solution && (
+        <h2 className="absolute bottom-0 right-0">solution: {solution}</h2>
       )}
-      {modal === lose && (
-        <div>
-          LOSE<button onClick={restartRound}>Restart</button>
-        </div>
-      )}
+      <AnimatePresence>
+        {modal === win && (
+          <Modal variant={win} solution={solution!} exitAction={restartRound} />
+        )}
+        {modal === lose && (
+          <Modal
+            variant={lose}
+            solution={solution!}
+            exitAction={restartRound}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
