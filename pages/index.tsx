@@ -5,11 +5,14 @@ import Wordle from "@/components/Wordle/Wordle";
 import getFormattedWord from "@/helpers/getFormattedWord";
 import getWord from "@/helpers/getWord";
 import isAlphabetKey from "@/helpers/isAlphabetKey";
+import wordExists from "@/helpers/wordExists";
 import { AppState, IWord, Result } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import Head from "next/head";
 import { useEffect, useState } from "react";
+import { ToastContainer, toast, ToastOptions } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const { start, inProgress, finish } = AppState;
 const { win, lose } = Result;
@@ -60,7 +63,7 @@ const Home = () => {
     wordRefetch();
   };
 
-  const handleKeyUp = (e: KeyboardEvent) => {
+  const handleKeyUp = async (e: KeyboardEvent) => {
     const key = e.key.toLowerCase();
     const alpha = isAlphabetKey(key);
 
@@ -71,21 +74,29 @@ const Home = () => {
     } else if (key === "backspace") {
       setInput((prev) => prev.slice(0, -1));
     } else if (key === "enter") {
-      console.log("enter");
-      if (
-        input.length !== 5 ||
-        words.map((word) => (word ? word.word : null)).includes(input)
-      )
+      if (input.length !== 5) return;
+
+      if (words.map((word) => (word ? word.word : null)).includes(input)) {
+        toast.error("Duplicated word", { toastId: 1 });
         return;
+      }
+
+      const exists = await wordExists(input);
+      if (exists === "error") {
+        toast.error("Dictionary error. Please try again later", { toastId: 2 });
+        return;
+      }
+      if (!exists) {
+        toast.error("No word in dictionary", { toastId: 3 });
+        return;
+      }
 
       addWord(input, turn);
       nextTurn();
 
       if (input === solution) {
-        console.log("solution found!");
         finishRound(win);
       } else if (turn === maxTurns - 1) {
-        console.log("game over");
         finishRound(lose);
       }
     }
@@ -138,6 +149,7 @@ const Home = () => {
           />
         )}
       </AnimatePresence>
+      <ToastContainer position="bottom-center" />
     </>
   );
 };
