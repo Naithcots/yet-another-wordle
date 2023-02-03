@@ -1,3 +1,5 @@
+import Alert from "@/components/Alert";
+import Spinner from "@/components/Spinner";
 import Modal from "@/components/Wordle/Modal";
 import Wordle from "@/components/Wordle/Wordle";
 import getFormattedWord from "@/helpers/getFormattedWord";
@@ -101,7 +103,7 @@ const Home = () => {
   }, [appState, input]);
 
   return (
-    <div>
+    <>
       <Head>
         <title>Wordle</title>
       </Head>
@@ -109,7 +111,10 @@ const Home = () => {
         <h1 className="text-2xl font-bold text-center">Wordle-Clone</h1>
       </header>
 
-      {solutionLoading && <h2>Loading...</h2>}
+      {solutionError && (
+        <Alert error text="Database error - please try again later." />
+      )}
+      {solutionLoading && <Spinner />}
       {solution && (
         <motion.div
           initial={{ opacity: 0, scale: 0 }}
@@ -133,7 +138,7 @@ const Home = () => {
           />
         )}
       </AnimatePresence>
-    </div>
+    </>
   );
 };
 export default Home;

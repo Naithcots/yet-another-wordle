@@ -53,9 +53,5 @@ export default function getFormattedWord(
         return letter;
       });
   });
-
-  console.log(charList);
   return { word, charList };
 }
-
-getFormattedWord("eerie", "eagle");
