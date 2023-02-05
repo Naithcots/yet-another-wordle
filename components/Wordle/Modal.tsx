@@ -51,14 +51,14 @@ const Modal = ({ variant, solution, exitAction }: Props) => {
       />
       <motion.div
         variants={modalVariants}
-        className="relative my-10 p-6 w-2/3 h-fit rounded-md z-20 bg-white"
+        className="relative my-10 p-6 w-2/3 h-fit rounded-md shadow-md z-20 bg-white dark:bg-stone-900"
       >
         <div className="flex flex-col gap-3">
           <h3 className="text-3xl">
             {variant === win ? "You won this round!" : "You lost this round.."}
           </h3>
           <h4 className="text-xl">
-            The solution was:{" "}
+            The solution was:
             <motion.p
               variants={solutionVariants}
               className="ml-2 inline-block font-semibold"
@@ -67,7 +67,7 @@ const Modal = ({ variant, solution, exitAction }: Props) => {
             </motion.p>
           </h4>
           <button
-            className="px-6 py-2 w-fit rounded-md text-white bg-black hover:shadow-lg transition-shadow"
+            className="px-6 py-2 w-fit rounded-md text-white bg-black dark:bg-gray-600 hover:shadow-lg transition-shadow"
             onClick={exitAction}
           >
             New Game

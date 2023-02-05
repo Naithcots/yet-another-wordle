@@ -11,11 +11,12 @@ interface Props {
 const variants: Variants = {
   default: { boxShadow: "none" },
   current: {
-    boxShadow: "0px 0px 3px 4px lightgray",
+    boxShadow: "0px 0px 1px 2px gray",
   },
   filled: {
     scale: [1, 1.15, 1],
-    borderColor: "rgb(55 65 81)",
+    // borderColor: "rgb(55 65 81)",
+    borderColor: "rgb(128, 128, 128)",
     transition: {
       type: "spring",
       duration: 0.2,
@@ -35,9 +36,9 @@ const variants: Variants = {
 
 const getBackgroundColor = (color: TColor | undefined) => {
   if (!color) return "transparent";
-  if (color === "default") return "#9ca3af";
-  if (color === "correct") return "#22c55e";
-  if (color === "exists") return "#fef08a";
+  if (color === "default") return "#808080";
+  if (color === "correct") return "#16a34a";
+  if (color === "exists") return "#ca8a04";
 };
 
 const Letter = ({ letter, color, variant, delay }: Props) => {
@@ -47,7 +48,7 @@ const Letter = ({ letter, color, variant, delay }: Props) => {
       variants={variants}
       animate={variant}
       custom={{ bgColor, delay }}
-      className="w-16 grid place-items-center aspect-square border-2 border-gray-400"
+      className="w-16 grid place-items-center aspect-square border-2 border-gray-400 text-white"
     >
       <span className="text-4xl font-bold uppercase">{letter || ""}</span>
     </motion.div>

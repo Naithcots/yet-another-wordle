@@ -146,7 +146,7 @@ const Home = () => {
   }, [appState, input]);
 
   return (
-    <div>
+    <div className="min-h-screen dark:bg-stone-900 dark:text-white">
       <Head>
         <title>Wordle</title>
       </Head>

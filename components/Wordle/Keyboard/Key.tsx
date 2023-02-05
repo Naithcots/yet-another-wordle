@@ -21,16 +21,16 @@ const Key = ({ letter, handleKeyUp }: Props) => {
   useEffect(() => {
     switch (letter.color) {
       case none:
-        setBackgroundColor("darkgray");
+        setBackgroundColor("#808080");
         break;
       case initial:
-        setBackgroundColor("lightgray");
+        setBackgroundColor("#d3d3d3");
         break;
       case exists:
-        setBackgroundColor("yellow");
+        setBackgroundColor("#ca8a04");
         break;
       case correct:
-        setBackgroundColor("green");
+        setBackgroundColor("#16a34a");
         break;
     }
   }, [letter]);
@@ -59,7 +59,7 @@ const Key = ({ letter, handleKeyUp }: Props) => {
 
   return (
     <motion.button
-      className="px-3 py-3 w-10 rounded-sm uppercase bg-gray-200"
+      className="px-3 py-3 w-10 rounded-sm uppercase bg-gray-200 transition-colors duration-300"
       style={{ backgroundColor }}
       onClick={() => handleClick(letter.char)}
       whileTap={{ scale: 0.9 }}
