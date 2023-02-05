@@ -11,7 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import Head from "next/head";
 import { useEffect, useState } from "react";
-import { ToastContainer, toast, ToastOptions } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const { start, inProgress, finish } = AppState;
@@ -31,7 +31,7 @@ const Home = () => {
 
   const [appState, setAppState] = useState<AppState>(start);
   const [turn, setTurn] = useState(0);
-  const [words, setWords] = useState<IWord[] | undefined[]>([
+  const [words, setWords] = useState<(IWord | undefined)[]>([
     ...Array(maxTurns),
   ]);
   const [input, setInput] = useState("");
@@ -40,7 +40,7 @@ const Home = () => {
   const addWord = (word: string, turn: number) => {
     const newWords = words;
     newWords[turn] = getFormattedWord(word, solution!);
-    setWords(newWords);
+    setWords([...newWords]);
   };
 
   const nextTurn = () => {
@@ -131,7 +131,7 @@ const Home = () => {
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <Wordle words={words} turn={turn} input={input} />
+          <Wordle solution={solution} words={words} turn={turn} input={input} />
         </motion.div>
       )}
       {solution && (
