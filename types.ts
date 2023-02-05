@@ -32,3 +32,16 @@ export interface IWord {
   word: string;
   charList: ILetter[];
 }
+
+export interface IAlphabet {
+  keys: string[];
+  layoutRows: number[];
+}
+
+export enum Tlanguage {
+  english = "english",
+}
+
+export interface IAlphabetList {
+  Tlanguage: IAlphabet;
+}

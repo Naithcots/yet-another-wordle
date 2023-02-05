@@ -1,16 +1,16 @@
-import { IWord } from "@/types";
+import { IAlphabet, IKeyboardKey, IWord } from "@/types";
 import Keyboard from "./Keyboard/Keyboard";
 import Line from "./Line";
-import alphabets from "./Keyboard/keys";
 
 interface Props {
   words: (IWord | undefined)[];
-  solution: string;
   turn: number;
   input: string;
+  alphabet: IAlphabet;
+  keys: IKeyboardKey[];
 }
 
-const Wordle = ({ words, solution, turn, input }: Props) => {
+const Wordle = ({ words, turn, input, alphabet, keys }: Props) => {
   return (
     <div className="flex flex-col items-center gap-2">
       <div className="my-4 flex flex-col gap-2">
@@ -22,11 +22,7 @@ const Wordle = ({ words, solution, turn, input }: Props) => {
           )
         )}
       </div>
-      <Keyboard
-        alphabet={alphabets.english}
-        words={words}
-        solution={solution}
-      />
+      <Keyboard alphabet={alphabet} keys={keys} />
     </div>
   );
 };

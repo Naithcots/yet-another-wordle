@@ -6,17 +6,29 @@ import getFormattedWord from "@/helpers/getFormattedWord";
 import getWord from "@/helpers/getWord";
 import isAlphabetKey from "@/helpers/isAlphabetKey";
 import wordExists from "@/helpers/wordExists";
-import { AppState, IWord, Result } from "@/types";
+import {
+  AppState,
+  IWord,
+  Result,
+  IKeyboardKey,
+  TKeyboardColor,
+  Tlanguage,
+} from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import getColor from "@/helpers/getColor";
+import alphabets from "@/components/Wordle/Keyboard/keys";
 import "react-toastify/dist/ReactToastify.css";
 
 const { start, inProgress, finish } = AppState;
 const { win, lose } = Result;
+const { initial } = TKeyboardColor;
+const { english } = Tlanguage;
 const maxTurns = 6;
+const solutionDelay = 1200;
 
 const Home = () => {
   const {
@@ -31,16 +43,30 @@ const Home = () => {
 
   const [appState, setAppState] = useState<AppState>(start);
   const [turn, setTurn] = useState(0);
-  const [words, setWords] = useState<(IWord | undefined)[]>([
-    ...Array(maxTurns),
-  ]);
+  const [language, setLanguage] = useState<Tlanguage>(english);
+  const initialWords = [...Array(maxTurns)];
+  const [words, setWords] = useState<(IWord | undefined)[]>(initialWords);
   const [input, setInput] = useState("");
+
+  const initialKeys = alphabets[language].keys.map((char) => ({
+    char,
+    color: initial,
+  }));
+  const [keys, setKeys] = useState<IKeyboardKey[]>(initialKeys);
   const [modal, setModal] = useState<null | Result>(null);
 
   const addWord = (word: string, turn: number) => {
     const newWords = words;
     newWords[turn] = getFormattedWord(word, solution!);
     setWords([...newWords]);
+  };
+
+  const formatKeyboard = () => {
+    const newKeys = keys.map((key) => {
+      const color = getColor(solution!, input, key);
+      return { char: key.char, color };
+    });
+    setTimeout(() => setKeys(newKeys), solutionDelay);
   };
 
   const nextTurn = () => {
@@ -51,13 +77,14 @@ const Home = () => {
   const finishRound = (result: Result) => {
     setAppState(finish);
 
-    setTimeout(() => setModal(result), 1250);
+    setTimeout(() => setModal(result), solutionDelay);
   };
 
   const restartRound = () => {
     setAppState(start);
     setInput("");
-    setWords([...Array(maxTurns)]);
+    setWords(initialWords);
+    setKeys(initialKeys);
     setTurn(0);
     setModal(null);
     wordRefetch();
@@ -92,6 +119,7 @@ const Home = () => {
       }
 
       addWord(input, turn);
+      formatKeyboard();
       nextTurn();
 
       if (input === solution) {
@@ -131,7 +159,13 @@ const Home = () => {
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <Wordle solution={solution} words={words} turn={turn} input={input} />
+          <Wordle
+            words={words}
+            turn={turn}
+            input={input}
+            alphabet={alphabets[language]}
+            keys={keys}
+          />
         </motion.div>
       )}
       {solution && (
