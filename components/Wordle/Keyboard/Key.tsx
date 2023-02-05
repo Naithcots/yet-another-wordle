@@ -6,12 +6,17 @@ import { HiOutlineBackspace } from "react-icons/hi";
 
 interface Props {
   letter: IKeyboardKey;
+  handleKeyUp: (e: KeyboardEvent | string) => Promise<void>;
 }
 
 const { none, initial, exists, correct } = TKeyboardColor;
 
-const Key = ({ letter }: Props) => {
+const Key = ({ letter, handleKeyUp }: Props) => {
   const [backgroundColor, setBackgroundColor] = useState("gray");
+
+  const handleClick = (char: string) => {
+    handleKeyUp(char);
+  };
 
   useEffect(() => {
     switch (letter.color) {
@@ -34,6 +39,7 @@ const Key = ({ letter }: Props) => {
     return (
       <motion.button
         className="px-2 py-3 w-16 rounded-sm uppercase bg-gray-200"
+        onClick={() => handleClick(letter.char)}
         whileTap={{ scale: 0.9 }}
       >
         <HiOutlineBackspace className="mx-auto text-xl" />
@@ -44,6 +50,7 @@ const Key = ({ letter }: Props) => {
     return (
       <motion.button
         className="px-2 py-3 w-16 flex justify-center items-center rounded-sm uppercase bg-gray-200"
+        onClick={() => handleClick(letter.char)}
         whileTap={{ scale: 0.9 }}
       >
         <AiOutlineEnter />
@@ -54,6 +61,7 @@ const Key = ({ letter }: Props) => {
     <motion.button
       className="px-3 py-3 w-10 rounded-sm uppercase bg-gray-200"
       style={{ backgroundColor }}
+      onClick={() => handleClick(letter.char)}
       whileTap={{ scale: 0.9 }}
     >
       {letter.char}

@@ -90,8 +90,12 @@ const Home = () => {
     wordRefetch();
   };
 
-  const handleKeyUp = async (e: KeyboardEvent) => {
-    const key = e.key.toLowerCase();
+  const handleKeyUp = async (e: KeyboardEvent | string) => {
+    let key: string;
+    if (e instanceof KeyboardEvent) {
+      key = e.key.toLowerCase();
+    } else key = e.toLowerCase();
+
     const alpha = isAlphabetKey(key);
 
     if (alpha) {
@@ -165,6 +169,7 @@ const Home = () => {
             input={input}
             alphabet={alphabets[language]}
             keys={keys}
+            handleKeyUp={handleKeyUp}
           />
         </motion.div>
       )}

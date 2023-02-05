@@ -8,9 +8,9 @@ interface Props {
   input: string;
   alphabet: IAlphabet;
   keys: IKeyboardKey[];
-}
+  handleKeyUp: (e: KeyboardEvent | string) => Promise<void>;}
 
-const Wordle = ({ words, turn, input, alphabet, keys }: Props) => {
+const Wordle = ({ words, turn, input, alphabet, keys, handleKeyUp }: Props) => {
   return (
     <div className="flex flex-col items-center gap-2">
       <div className="my-4 flex flex-col gap-2">
@@ -22,7 +22,7 @@ const Wordle = ({ words, turn, input, alphabet, keys }: Props) => {
           )
         )}
       </div>
-      <Keyboard alphabet={alphabet} keys={keys} />
+      <Keyboard alphabet={alphabet} keys={keys} handleKeyUp={handleKeyUp} />
     </div>
   );
 };
