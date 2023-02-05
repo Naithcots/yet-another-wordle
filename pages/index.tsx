@@ -33,7 +33,7 @@ const solutionDelay = 1200;
 const Home = () => {
   const {
     refetch: wordRefetch,
-    error: solutionError,
+    isError: solutionError,
     isLoading: solutionLoading,
     data: solution,
   } = useQuery<string>(["word"], getWord, {
@@ -146,10 +146,11 @@ const Home = () => {
   }, [appState, input]);
 
   return (
-    <>
+    <div>
       <Head>
         <title>Wordle</title>
       </Head>
+
       <header className="p-2">
         <h1 className="text-2xl font-bold text-center">Wordle-Clone</h1>
       </header>
@@ -189,7 +190,7 @@ const Home = () => {
         )}
       </AnimatePresence>
       <ToastContainer position="bottom-center" />
-    </>
+    </div>
   );
 };
 export default Home;
