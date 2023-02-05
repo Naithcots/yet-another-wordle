@@ -40,6 +40,7 @@ export interface IAlphabet {
 
 export enum Tlanguage {
   english = "english",
+  polish = "polish",
 }
 
 export interface IAlphabetList {

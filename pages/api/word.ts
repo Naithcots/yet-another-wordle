@@ -9,7 +9,9 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const response = await axios.get(process.env.WORDS_URL!);
+    const { lang } = req.query;
+
+    const response = await axios.get(`${process.env.DOMAIN_URL!}/${lang}.json`);
     const words: string[] = response.data;
 
     const r = floor(random() * words.length);

@@ -1,4 +1,7 @@
+import { Tlanguage } from "@/types";
 import { IAlphabetList } from "./types";
+
+const { english, polish } = Tlanguage;
 
 const alphabets: IAlphabetList = {
   english: {
@@ -31,6 +34,48 @@ const alphabets: IAlphabetList = {
       "n",
       "m",
       "backspace",
+    ],
+    layoutRows: [10, 19, 28],
+  },
+  polish: {
+    keys: [
+      "q",
+      "w",
+      "e",
+      "r",
+      "t",
+      "y",
+      "u",
+      "i",
+      "o",
+      "p",
+      "a",
+      "s",
+      "d",
+      "f",
+      "g",
+      "h",
+      "j",
+      "k",
+      "l",
+      "enter",
+      "z",
+      "x",
+      "c",
+      "v",
+      "b",
+      "n",
+      "m",
+      "backspace",
+      "ą",
+      "ć",
+      "ę",
+      "ł",
+      "ń",
+      "ó",
+      "ś",
+      "ż",
+      "ź",
     ],
     layoutRows: [10, 19, 28],
   },

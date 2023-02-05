@@ -5,4 +5,5 @@ export interface IAlphabet {
 
 export interface IAlphabetList {
   english: IAlphabet;
+  polish: IAlphabet;
 }

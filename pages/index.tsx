@@ -22,38 +22,35 @@ import { ToastContainer, toast } from "react-toastify";
 import getColor from "@/helpers/getColor";
 import alphabets from "@/components/Wordle/Keyboard/keys";
 import "react-toastify/dist/ReactToastify.css";
+import getFormattedKeys from "@/helpers/getFormattedKeys";
 
 const { start, inProgress, finish } = AppState;
 const { win, lose } = Result;
 const { initial } = TKeyboardColor;
-const { english } = Tlanguage;
+const { english, polish } = Tlanguage;
 const maxTurns = 6;
 const solutionDelay = 1200;
 
 const Home = () => {
-  const {
-    refetch: wordRefetch,
-    isError: solutionError,
-    isLoading: solutionLoading,
-    data: solution,
-  } = useQuery<string>(["word"], getWord, {
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  });
-
   const [appState, setAppState] = useState<AppState>(start);
   const [turn, setTurn] = useState(0);
   const [language, setLanguage] = useState<Tlanguage>(english);
   const initialWords = [...Array(maxTurns)];
   const [words, setWords] = useState<(IWord | undefined)[]>(initialWords);
   const [input, setInput] = useState("");
-
-  const initialKeys = alphabets[language].keys.map((char) => ({
-    char,
-    color: initial,
-  }));
-  const [keys, setKeys] = useState<IKeyboardKey[]>(initialKeys);
+  const [keys, setKeys] = useState<IKeyboardKey[]>(getFormattedKeys(language));
   const [modal, setModal] = useState<null | Result>(null);
+
+  const {
+    refetch: wordRefetch,
+    isError: solutionError,
+    isLoading: solutionLoading,
+    data: solution,
+  } = useQuery<string>(["word"], async () => await getWord(language), {
+    enabled: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
 
   const addWord = (word: string, turn: number) => {
     const newWords = words;
@@ -84,10 +81,15 @@ const Home = () => {
     setAppState(start);
     setInput("");
     setWords(initialWords);
-    setKeys(initialKeys);
+    setKeys(getFormattedKeys(language));
     setTurn(0);
     setModal(null);
     wordRefetch();
+  };
+
+  const switchLanguage = () => {
+    const newLanguage = language === english ? polish : english;
+    setLanguage(newLanguage);
   };
 
   const handleKeyUp = async (e: KeyboardEvent | string) => {
@@ -112,7 +114,7 @@ const Home = () => {
         return;
       }
 
-      const exists = await wordExists(input);
+      const exists = await wordExists(input, language);
       if (exists === "error") {
         toast.error("Dictionary error. Please try again later", { toastId: 2 });
         return;
@@ -135,11 +137,21 @@ const Home = () => {
   };
 
   useEffect(() => {
+    restartRound();
+  }, []);
+
+  useEffect(() => {
+    restartRound();
+  }, [language]);
+
+  useEffect(() => {
     solution && setAppState(inProgress);
   }, [solution]);
 
   useEffect(() => {
-    appState === inProgress && document.addEventListener("keyup", handleKeyUp);
+    appState === inProgress &&
+      solution &&
+      document.addEventListener("keyup", handleKeyUp);
     return () => {
       document.removeEventListener("keyup", handleKeyUp);
     };
@@ -151,8 +163,13 @@ const Home = () => {
         <title>Wordle</title>
       </Head>
 
-      <header className="p-2">
-        <h1 className="text-2xl font-bold text-center">Wordle-Clone</h1>
+      <header className="p-3 flex">
+        <h1 className="grow text-2xl font-bold text-center">Wordle-Clone</h1>
+        <img
+          src={language === english ? "english.svg" : "polish.svg"}
+          className="max-w-[28px] border-2 border-gray-900 cursor-pointer"
+          onClick={switchLanguage}
+        />
       </header>
 
       {solutionError && (
@@ -174,9 +191,9 @@ const Home = () => {
           />
         </motion.div>
       )}
-      {solution && (
+      {/* {solution && (
         <h2 className="absolute bottom-0 right-0">solution: {solution}</h2>
-      )}
+      )} */}
       <AnimatePresence>
         {modal === win && (
           <Modal variant={win} solution={solution!} exitAction={restartRound} />

@@ -1,3 +1,3 @@
 export default function isAlphabetKey(key: string) {
-  return /^[a-z]$/i.test(key);
+  return /^[a-ząćęłńóśżź]$/i.test(key);
 }
