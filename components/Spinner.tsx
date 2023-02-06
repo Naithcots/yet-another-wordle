@@ -3,7 +3,11 @@ import { CgSpinnerTwo } from "react-icons/cg";
 
 const spinnerContainerVariants: Variants = {
   hidden: { scale: 0, opacity: 0 },
-  visible: { scale: 1, opacity: 1, transition: { when: "beforeChildren" } },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: { type: "tween", when: "beforeChildren" },
+  },
 };
 
 const spinnerVariants: Variants = {

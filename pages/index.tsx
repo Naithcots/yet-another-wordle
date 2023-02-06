@@ -15,7 +15,7 @@ import {
   Tlanguage,
 } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
 import { useEffect, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
@@ -158,13 +158,15 @@ const Home = () => {
   }, [appState, input]);
 
   return (
-    <div className="min-h-screen dark:bg-stone-900 dark:text-white">
+    <div className="min-h-screen flex flex-col gap-2 dark:bg-stone-900 dark:text-white">
       <Head>
-        <title>Wordle</title>
+        <title>Yet Another Wordle</title>
       </Head>
 
-      <header className="px-3 py-2 flex items-center">
-        <h1 className="grow text-2xl font-bold text-center">Wordle-Clone</h1>
+      <header className="px-3 py-2 flex items-center border-b border-gray-700">
+        <h1 className="grow text-xl font-semi text-gray-300">
+          Yet Another Wordle
+        </h1>
         <img
           src={language === english ? "english.svg" : "polish.svg"}
           className="max-w-[28px] border-2 border-gray-300 cursor-pointer"
@@ -177,19 +179,14 @@ const Home = () => {
       )}
       {solutionLoading && <Spinner />}
       {solution && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          <Wordle
-            words={words}
-            turn={turn}
-            input={input}
-            alphabet={alphabets[language]}
-            keys={keys}
-            handleKeyUp={handleKeyUp}
-          />
-        </motion.div>
+        <Wordle
+          words={words}
+          turn={turn}
+          input={input}
+          alphabet={alphabets[language]}
+          keys={keys}
+          handleKeyUp={handleKeyUp}
+        />
       )}
       {/* {solution && (
         <h2 className="absolute bottom-0 right-0">solution: {solution}</h2>
