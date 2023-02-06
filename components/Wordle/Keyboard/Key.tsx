@@ -41,6 +41,7 @@ const Key = ({ letter, handleKeyUp }: Props) => {
         className="px-2 py-3 w-16 rounded-sm uppercase bg-gray-200"
         onClick={() => handleClick(letter.char)}
         whileTap={{ scale: 0.9 }}
+        whileHover={{scale: 1.1}}
       >
         <HiOutlineBackspace className="mx-auto text-xl" />
       </motion.button>
@@ -52,6 +53,7 @@ const Key = ({ letter, handleKeyUp }: Props) => {
         className="px-2 py-3 w-16 flex justify-center items-center rounded-sm uppercase bg-gray-200"
         onClick={() => handleClick(letter.char)}
         whileTap={{ scale: 0.9 }}
+        whileHover={{scale: 1.1}}
       >
         <AiOutlineEnter />
       </motion.button>
@@ -63,6 +65,7 @@ const Key = ({ letter, handleKeyUp }: Props) => {
       style={{ backgroundColor }}
       onClick={() => handleClick(letter.char)}
       whileTap={{ scale: 0.9 }}
+      whileHover={{scale: 1.1}}
     >
       {letter.char}
     </motion.button>

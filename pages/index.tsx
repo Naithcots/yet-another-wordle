@@ -163,11 +163,11 @@ const Home = () => {
         <title>Wordle</title>
       </Head>
 
-      <header className="p-3 flex">
+      <header className="p-3 flex items-center">
         <h1 className="grow text-2xl font-bold text-center">Wordle-Clone</h1>
         <img
           src={language === english ? "english.svg" : "polish.svg"}
-          className="max-w-[28px] border-2 border-gray-900 cursor-pointer"
+          className="max-w-[28px] border-2 border-gray-300 cursor-pointer"
           onClick={switchLanguage}
         />
       </header>
