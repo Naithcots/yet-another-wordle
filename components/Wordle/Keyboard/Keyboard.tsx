@@ -17,7 +17,7 @@ const Keyboard = ({ alphabet, keys, handleKeyUp }: Props) => {
   const row3 = keys.slice(layoutRows[1], layoutRows[2]);
 
   return (
-    <div className="flex flex-col gap-2 text-black">
+    <div className="px-3 w-full md:w-fit flex flex-col gap-2 text-black">
       <div className="flex justify-center gap-2">
         {row0.map((letter, idx) => {
           return <Key letter={letter} handleKeyUp={handleKeyUp} key={idx} />;

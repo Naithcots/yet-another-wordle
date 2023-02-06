@@ -48,9 +48,9 @@ const Letter = ({ letter, color, variant, delay }: Props) => {
       variants={variants}
       animate={variant}
       custom={{ bgColor, delay }}
-      className="w-16 grid place-items-center aspect-square border-2 border-gray-400 dark:text-white"
+      className="w-12 md:w-14 grid place-items-center aspect-square border-2 border-gray-400 dark:text-white"
     >
-      <span className="text-4xl font-bold uppercase">{letter || ""}</span>
+      <span className="text-3xl font-bold uppercase">{letter || ""}</span>
     </motion.div>
   );
 };

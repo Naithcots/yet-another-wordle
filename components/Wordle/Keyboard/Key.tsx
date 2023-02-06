@@ -38,7 +38,7 @@ const Key = ({ letter, handleKeyUp }: Props) => {
   if (letter.char === "backspace")
     return (
       <motion.button
-        className="px-2 py-3 w-16 rounded-sm uppercase bg-gray-200"
+        className="w-12 md:w-16 flex justify-center items-center rounded-sm uppercase bg-gray-200"
         onClick={() => handleClick(letter.char)}
         whileTap={{ scale: 0.9 }}
         whileHover={{scale: 1.1}}
@@ -50,7 +50,7 @@ const Key = ({ letter, handleKeyUp }: Props) => {
   if (letter.char === "enter")
     return (
       <motion.button
-        className="px-2 py-3 w-16 flex justify-center items-center rounded-sm uppercase bg-gray-200"
+        className="w-12 md:w-16 flex justify-center items-center rounded-sm uppercase bg-gray-200"
         onClick={() => handleClick(letter.char)}
         whileTap={{ scale: 0.9 }}
         whileHover={{scale: 1.1}}
@@ -61,7 +61,7 @@ const Key = ({ letter, handleKeyUp }: Props) => {
 
   return (
     <motion.button
-      className="px-3 py-3 w-10 rounded-sm uppercase bg-gray-200 transition-colors duration-300"
+      className="w-7 md:w-9 lg:w-10 aspect-[2/3] flex justify-center items-center rounded-sm uppercase bg-gray-200 transition-colors duration-300"
       style={{ backgroundColor }}
       onClick={() => handleClick(letter.char)}
       whileTap={{ scale: 0.9 }}

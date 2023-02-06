@@ -13,7 +13,7 @@ interface Props {
 
 const Wordle = ({ words, turn, input, alphabet, keys, handleKeyUp }: Props) => {
   return (
-    <div className="flex flex-col items-center gap-6">
+    <div className="flex flex-col items-center gap-2">
       <div className="my-4 flex flex-col gap-2">
         {words.map((word, idx) =>
           idx === turn ? (
