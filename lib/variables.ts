@@ -1,5 +1,4 @@
 export const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-export const secretKey = process.env.NEXT_PUBLIC_CRYPTO_SECRET;
 
 const language = "english" as const;
 const maxTurns = 6;

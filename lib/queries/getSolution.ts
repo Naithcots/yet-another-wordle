@@ -1,7 +1,7 @@
-import { appUrl, secretKey } from "@/lib/variables";
+import { appUrl } from "@/lib/variables";
 
 export default async function getSolution() {
-  if (!appUrl || !secretKey) {
+  if (!appUrl) {
     throw new Error("Missing variables");
   }
 

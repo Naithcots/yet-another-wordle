@@ -1,4 +1,4 @@
-import { appUrl, secretKey } from "@/lib/variables";
+import { appUrl } from "@/lib/variables";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export type SolutionResponse = {
@@ -19,7 +19,7 @@ export default async function handler(
   res: NextApiResponse<SolutionResponse>,
 ) {
   try {
-    if (!appUrl || !secretKey) {
+    if (!appUrl) {
       throw new Error("Invalid request");
     }
 
