@@ -1,13 +1,11 @@
-import { Result } from "@/types";
+import { GameResult } from "@/types";
 import { motion, Variants } from "framer-motion";
 
 interface Props {
-  variant: Result;
+  variant: GameResult;
   solution: string;
   exitAction: () => void;
 }
-
-const { win, lose } = Result;
 
 const modalContainerVariants: Variants = {
   hidden: {},
@@ -28,14 +26,6 @@ const modalVariants: Variants = {
   visible: { opacity: 1, scale: 1 },
 };
 
-const solutionVariants: Variants = {
-  hidden: { scale: 0 },
-  visible: {
-    scale: [1, 1.15, 1],
-    transition: { duration: 3, repeat: Infinity },
-  },
-};
-
 const Modal = ({ variant, solution, exitAction }: Props) => {
   return (
     <motion.div
@@ -43,31 +33,28 @@ const Modal = ({ variant, solution, exitAction }: Props) => {
       initial="hidden"
       animate="visible"
       exit="hidden"
-      className="absolute inset-0 grid justify-items-center z-10"
+      className="absolute inset-0 z-10 grid justify-items-center"
     >
       <motion.div
         variants={modalBgVariants}
-        className="absolute inset-0 bg-opacity-90 backdrop-blur-sm bg-black"
+        className="absolute inset-0 bg-black bg-opacity-90 backdrop-blur-sm"
       />
       <motion.div
         variants={modalVariants}
-        className="relative my-10 p-6 w-2/3 h-fit rounded-md shadow-md z-20 bg-white dark:bg-stone-900"
+        className="relative z-20 my-10 h-fit w-2/3 rounded-md bg-white p-6 shadow-md dark:bg-stone-900"
       >
         <div className="flex flex-col gap-3">
           <h3 className="text-3xl">
-            {variant === win ? "You won this round!" : "You lost this round.."}
+            {variant === GameResult.WON
+              ? "Congratulations! You guessed the word!"
+              : "Better luck next time!"}
           </h3>
           <h4 className="text-xl">
-            The solution was:
-            <motion.p
-              variants={solutionVariants}
-              className="ml-2 inline-block font-semibold"
-            >
-              {solution}
-            </motion.p>
+            The solution is:
+            <span className="ml-2 font-semibold">{solution}</span>
           </h4>
           <button
-            className="px-6 py-2 w-fit rounded-md text-white bg-black dark:bg-gray-600 hover:shadow-lg transition-shadow"
+            className="w-fit rounded-md bg-black px-6 py-2 text-white transition-shadow hover:shadow-lg dark:bg-gray-600"
             onClick={exitAction}
           >
             New Game

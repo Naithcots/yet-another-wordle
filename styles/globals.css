@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --color-background: 28 25 23;
+    --color-letter-border: 255 255 255;
+    --color-letter-error: 255 0 0;
+  }
+}

@@ -1,14 +1,16 @@
 import { IAlphabet, IKeyboardKey, IWord } from "@/types";
+import { Variants } from "framer-motion";
+import { MutableRefObject } from "react";
 import Keyboard from "./Keyboard/Keyboard";
 import Line from "./Line";
-import { motion, Variants } from "framer-motion";
 
-interface Props {
-  words: (IWord | undefined)[];
+interface WordleProps {
+  words: IWord[];
   turn: number;
   input: string;
   alphabet: IAlphabet;
   keys: IKeyboardKey[];
+  currentLineRef: MutableRefObject<HTMLDivElement | null>;
   handleKeyUp: (e: KeyboardEvent | string) => Promise<void>;
 }
 
@@ -17,25 +19,34 @@ const variants: Variants = {
   visible: { opacity: 1, scale: 1, transition: { type: "tween" } },
 };
 
-const Wordle = ({ words, turn, input, alphabet, keys, handleKeyUp }: Props) => {
+const Wordle = ({
+  words,
+  turn,
+  input,
+  alphabet,
+  keys,
+  currentLineRef,
+  handleKeyUp,
+}: WordleProps) => {
   return (
-    <motion.div
-      className="flex flex-col items-center gap-2"
-      variants={variants}
-      initial="hidden"
-      animate="visible"
-    >
+    <div className="flex flex-col items-center gap-2">
       <div className="my-4 flex flex-col gap-2">
         {words.map((word, idx) =>
           idx === turn ? (
-            <Line currentTurn word={word} input={input} key={idx} />
+            <Line
+              currentTurn
+              lineRef={currentLineRef}
+              word={word}
+              input={input}
+              key={idx}
+            />
           ) : (
             <Line word={word} key={idx} />
-          )
+          ),
         )}
       </div>
       <Keyboard alphabet={alphabet} keys={keys} handleKeyUp={handleKeyUp} />
-    </motion.div>
+    </div>
   );
 };
 export default Wordle;

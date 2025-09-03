@@ -7,14 +7,16 @@ interface ILetterAmount {
 
 export default function getFormattedWord(
   word: string,
-  solution: string
+  solution: string,
 ): IWord {
   // Count letters in solution
   let solutionLetters: ILetterAmount[] = [];
   solution.split("").forEach((letter) => {
     if (solutionLetters.some((sLetter) => sLetter.char === letter)) {
       solutionLetters = solutionLetters.map((sLetter) =>
-        sLetter.char === letter ? { ...sLetter, qty: sLetter.qty + 1 } : sLetter
+        sLetter.char === letter
+          ? { ...sLetter, qty: sLetter.qty + 1 }
+          : sLetter,
       );
     } else {
       solutionLetters.push({ char: letter, qty: 1 });

@@ -1,12 +1,12 @@
-export enum AppState {
-  start = 0,
-  inProgress = 1,
-  finish = 2,
+export enum GamePhase {
+  START = "START",
+  IN_PROGRESS = "IN_PROGRESS",
+  RESULTS = "RESULTS",
 }
 
-export enum Result {
-  lose = 0,
-  win = 1,
+export enum GameResult {
+  LOST = "LOST",
+  WON = "WON",
 }
 
 export type TColor = "default" | "exists" | "correct";

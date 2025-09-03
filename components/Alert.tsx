@@ -11,7 +11,7 @@ const Alert = ({ text, error }: Props) => {
     return (
       <div className="my-2 flex justify-center">
         <motion.div
-          className="px-6 py-3 w-fit flex items-center gap-2 rounded-md bg-red-700 text-white"
+          className="flex w-fit items-center gap-2 rounded-md bg-red-700 px-6 py-3 text-white"
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
         >
@@ -21,7 +21,7 @@ const Alert = ({ text, error }: Props) => {
       </div>
     );
   return (
-    <div className="p-2 bg-black rounded-md text-white">
+    <div className="rounded-md bg-black p-2 text-white">
       <p>{text}</p>
     </div>
   );

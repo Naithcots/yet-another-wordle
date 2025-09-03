@@ -1,38 +1,13 @@
 import { TColor } from "@/types";
-import { motion, Variants } from "framer-motion";
+import { CSSProperties } from "react";
+import styles from "./Letter.module.css";
 
-interface Props {
+interface LetterProps {
   letter?: string;
   color?: TColor;
-  delay?: number;
+  idx: number;
   variant: "current" | "filled" | "completed" | "empty";
 }
-
-const variants: Variants = {
-  default: { boxShadow: "none" },
-  current: {
-    boxShadow: "0px 0px 1px 2px gray",
-  },
-  filled: {
-    scale: [1, 1.15, 1],
-    // borderColor: "rgb(55 65 81)",
-    borderColor: "rgb(128, 128, 128)",
-    transition: {
-      type: "spring",
-      duration: 0.2,
-    },
-  },
-  completed: ({ bgColor, delay }) => ({
-    borderWidth: ["2px", "2px", "0px", "0px"],
-    rotateY: [0, 90, 90, 0],
-    backgroundColor: ["#ffffff00", "#ffffff00", bgColor, bgColor],
-    transition: {
-      times: [0, 0.5, 0.5, 1],
-      duration: 0.75,
-      delay: delay * 0.1,
-    },
-  }),
-};
 
 const getBackgroundColor = (color: TColor | undefined) => {
   if (!color) return "transparent";
@@ -41,17 +16,27 @@ const getBackgroundColor = (color: TColor | undefined) => {
   if (color === "exists") return "#ca8a04";
 };
 
-const Letter = ({ letter, color, variant, delay }: Props) => {
-  const bgColor = getBackgroundColor(color);
+const Letter = ({ letter, color, variant, idx }: LetterProps) => {
+  const backgroundColor = getBackgroundColor(color);
+  const style = {
+    "--index": idx,
+    "--color-background-letter-face-back": backgroundColor,
+  } as CSSProperties;
+
+  const letterElement = (
+    <span className="text-3xl font-bold uppercase">{letter ?? ""}</span>
+  );
+
   return (
-    <motion.div
-      variants={variants}
-      animate={variant}
-      custom={{ bgColor, delay }}
-      className="w-12 md:w-14 grid place-items-center aspect-square border-2 border-gray-400 dark:text-white"
+    <div
+      style={style}
+      className={`${styles.container} ${
+        variant === "filled" ? styles.filled : ""
+      } ${variant === "completed" ? styles.reveal : ""}`}
     >
-      <span className="text-3xl font-bold uppercase">{letter || ""}</span>
-    </motion.div>
+      <div className={`${styles.face} ${styles.front}`}>{letterElement}</div>
+      <div className={`${styles.face} ${styles.back}`}>{letterElement}</div>
+    </div>
   );
 };
 export default Letter;

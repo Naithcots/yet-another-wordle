@@ -1,0 +1,68 @@
+.container {
+  --border-width: 2px;
+
+  width: 48px;
+  height: 48px;
+  position: relative;
+  transform-style: preserve-3d;
+
+  border: var(--border-width) solid white;
+}
+
+.container.filled {
+  animation: filled 0.2s ease-in-out;
+}
+
+.container.reveal {
+  animation-name: reveal;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+  animation-duration: var(--reveal-animation-duration);
+  animation-delay: calc(var(--index) * var(--reveal-animation-letter-delay));
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+
+  display: grid;
+  place-items: center;
+}
+
+.face.front {
+  background-color: rgb(var(--color-background));
+}
+
+.face.back {
+  translate: 0 0 -0.1px;
+  rotate: y 180deg;
+  background-color: var(--color-background-letter-face-back);
+}
+
+@media screen and (min-width: 768px) {
+  .container {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+@keyframes filled {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes reveal {
+  from {
+    transform: rotateY(0deg);
+    border-width: var(--border-width);
+  }
+  to {
+    transform: rotateY(180deg);
+    border-width: 0px;
+  }
+}

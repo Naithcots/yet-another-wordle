@@ -5,7 +5,7 @@ const { none, initial, exists, correct } = TKeyboardColor;
 export default function getColor(
   solution: string,
   word: string,
-  key: IKeyboardKey
+  key: IKeyboardKey,
 ) {
   if (key.color === correct || key.color === none || !word.includes(key.char))
     return key.color;

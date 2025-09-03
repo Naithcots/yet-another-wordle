@@ -38,10 +38,10 @@ const Key = ({ letter, handleKeyUp }: Props) => {
   if (letter.char === "backspace")
     return (
       <motion.button
-        className="w-12 md:w-16 flex justify-center items-center rounded-sm uppercase bg-gray-200"
+        className="flex w-12 items-center justify-center rounded-sm bg-gray-200 uppercase md:w-16"
         onClick={() => handleClick(letter.char)}
         whileTap={{ scale: 0.9 }}
-        whileHover={{scale: 1.1}}
+        whileHover={{ scale: 1.1 }}
       >
         <HiOutlineBackspace className="mx-auto text-xl" />
       </motion.button>
@@ -50,10 +50,10 @@ const Key = ({ letter, handleKeyUp }: Props) => {
   if (letter.char === "enter")
     return (
       <motion.button
-        className="w-12 md:w-16 flex justify-center items-center rounded-sm uppercase bg-gray-200"
+        className="flex w-12 items-center justify-center rounded-sm bg-gray-200 uppercase md:w-16"
         onClick={() => handleClick(letter.char)}
         whileTap={{ scale: 0.9 }}
-        whileHover={{scale: 1.1}}
+        whileHover={{ scale: 1.1 }}
       >
         <AiOutlineEnter />
       </motion.button>
@@ -61,11 +61,11 @@ const Key = ({ letter, handleKeyUp }: Props) => {
 
   return (
     <motion.button
-      className="w-7 md:w-9 lg:w-10 aspect-[2/3] flex justify-center items-center rounded-sm uppercase bg-gray-200 transition-colors duration-300"
+      className="flex aspect-[2/3] w-7 items-center justify-center rounded-sm bg-gray-200 uppercase transition-colors duration-300 md:w-9 lg:w-10"
       style={{ backgroundColor }}
       onClick={() => handleClick(letter.char)}
       whileTap={{ scale: 0.9 }}
-      whileHover={{scale: 1.1}}
+      whileHover={{ scale: 1.1 }}
     >
       {letter.char}
     </motion.button>

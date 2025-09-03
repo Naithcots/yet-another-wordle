@@ -1,12 +1,7 @@
 import "@/styles/globals.css";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App({ Component, pageProps }: AppProps) {
-  const client = new QueryClient();
-  return (
-    <QueryClientProvider client={client}>
-      <Component {...pageProps} />
-    </QueryClientProvider>
-  );
+  return <Component {...pageProps} />;
 }

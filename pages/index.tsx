@@ -1,209 +1,185 @@
 import Alert from "@/components/Alert";
 import Spinner from "@/components/Spinner";
+import alphabets from "@/components/Wordle/Keyboard/keys";
 import Modal from "@/components/Wordle/Modal";
 import Wordle from "@/components/Wordle/Wordle";
-import getFormattedWord from "@/helpers/getFormattedWord";
-import getWord from "@/helpers/getWord";
 import isAlphabetKey from "@/helpers/isAlphabetKey";
-import wordExists from "@/helpers/wordExists";
-import {
-  AppState,
-  IWord,
-  Result,
-  IKeyboardKey,
-  TKeyboardColor,
-  Tlanguage,
-} from "@/types";
-import { useQuery } from "@tanstack/react-query";
+import { letterErrorKeyframes } from "@/lib/animations/letterError";
+import { initialState, reducer } from "@/lib/gameReducer";
+import getSolution from "@/lib/queries/getSolution";
+import validateWord from "@/lib/queries/validateWord";
+import { settings } from "@/lib/variables";
+import { GamePhase, GameResult } from "@/types";
 import { AnimatePresence } from "framer-motion";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
-import getColor from "@/helpers/getColor";
-import alphabets from "@/components/Wordle/Keyboard/keys";
-import "react-toastify/dist/ReactToastify.css";
-import getFormattedKeys from "@/helpers/getFormattedKeys";
-
-const { start, inProgress, finish } = AppState;
-const { win, lose } = Result;
-const { initial } = TKeyboardColor;
-const { english, polish } = Tlanguage;
-const maxTurns = 6;
-const solutionDelay = 1200;
 
 const Home = () => {
-  const [appState, setAppState] = useState<AppState>(start);
-  const [turn, setTurn] = useState(0);
-  const [language, setLanguage] = useState<Tlanguage>(english);
-  const initialWords = [...Array(maxTurns)];
-  const [words, setWords] = useState<(IWord | undefined)[]>(initialWords);
-  const [input, setInput] = useState("");
-  const [keys, setKeys] = useState<IKeyboardKey[]>(getFormattedKeys(language));
-  const [modal, setModal] = useState<null | Result>(null);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [modal, setModal] = useState<GameResult | null>(null);
+  const currentLineRef = useRef<HTMLDivElement | null>(null);
 
-  const {
-    refetch: wordRefetch,
-    isError: solutionError,
-    isLoading: solutionLoading,
-    data: solution,
-  } = useQuery<string>(["word"], async () => await getWord(language), {
-    enabled: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  });
-
-  const addWord = (word: string, turn: number) => {
-    const newWords = words;
-    newWords[turn] = getFormattedWord(word, solution!);
-    setWords([...newWords]);
-  };
-
-  const formatKeyboard = () => {
-    const newKeys = keys.map((key) => {
-      const color = getColor(solution!, input, key);
-      return { char: key.char, color };
-    });
-    setTimeout(() => setKeys(newKeys), solutionDelay);
-  };
-
-  const nextTurn = () => {
-    setInput("");
-    setTurn(turn + 1);
-  };
-
-  const finishRound = (result: Result) => {
-    setAppState(finish);
-
-    setTimeout(() => setModal(result), solutionDelay);
-  };
-
-  const restartRound = () => {
-    setAppState(start);
-    setInput("");
-    setWords(initialWords);
-    setKeys(getFormattedKeys(language));
-    setTurn(0);
+  const initialize = async () => {
+    dispatch({ type: "RESET", payload: null });
     setModal(null);
-    wordRefetch();
-  };
-
-  const switchLanguage = () => {
-    const newLanguage = language === english ? polish : english;
-    setLanguage(newLanguage);
-  };
-
-  const handleKeyUp = async (e: KeyboardEvent | string) => {
-    let key: string;
-    if (e instanceof KeyboardEvent) {
-      key = e.key.toLowerCase();
-    } else key = e.toLowerCase();
-
-    const alpha = isAlphabetKey(key);
-
-    if (alpha) {
-      if (input.length < 5) {
-        setInput((prev) => prev + key);
-      }
-    } else if (key === "backspace") {
-      setInput((prev) => prev.slice(0, -1));
-    } else if (key === "enter") {
-      if (input.length !== 5) return;
-
-      if (words.map((word) => (word ? word.word : null)).includes(input)) {
-        toast.error("Duplicated word", { toastId: 1 });
-        return;
-      }
-
-      const exists = await wordExists(input, language);
-      if (exists === "error") {
-        toast.error("Dictionary error. Please try again later", { toastId: 2 });
-        return;
-      }
-      if (!exists) {
-        toast.error("No word in dictionary", { toastId: 3 });
-        return;
-      }
-
-      addWord(input, turn);
-      formatKeyboard();
-      nextTurn();
-
-      if (input === solution) {
-        finishRound(win);
-      } else if (turn === maxTurns - 1) {
-        finishRound(lose);
-      }
+    try {
+      setIsLoading(true);
+      const solution = await getSolution();
+      dispatch({ type: "START", payload: { solution } });
+    } catch (err) {
+      const errorText = "Unable to fetch solution. Please try again later.";
+      setError(errorText);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleKeyUp = useCallback(
+    async (e: KeyboardEvent | string) => {
+      if (state.phase !== GamePhase.IN_PROGRESS) return;
+
+      let key: string;
+      if (e instanceof KeyboardEvent) {
+        key = e.key.toLowerCase();
+      } else key = e.toLowerCase();
+
+      if (isAlphabetKey(key)) {
+        if (state.input.length < 5) {
+          dispatch({
+            type: "SET_INPUT",
+            payload: { input: state.input + key },
+          });
+        }
+      } else if (key === "backspace") {
+        dispatch({
+          type: "SET_INPUT",
+          payload: { input: state.input.slice(0, -1) },
+        });
+      } else if (key === "enter") {
+        if (state.input.length !== 5) return;
+
+        if (
+          state.words
+            .map((word) => (word ? word.word : null))
+            .includes(state.input)
+        ) {
+          toast.error("Unable to submit duplicated word.");
+          return;
+        }
+
+        const validateResult = await validateWord(state.input);
+        if (!validateResult) {
+          const letters = Array.from(currentLineRef.current?.children || []);
+          letters.forEach((letter, idx) => {
+            letter.getAnimations().forEach((a) => a.cancel());
+            letter.animate(letterErrorKeyframes(idx % 2 === 0), {
+              duration: 300,
+              delay: idx * 30,
+              easing: "ease-in",
+            });
+          });
+          return;
+        }
+
+        dispatch({ type: "FORMAT_KEYBOARD", payload: null });
+        dispatch({ type: "SUBMIT_INPUT", payload: null });
+
+        if (state.input === state.solution) {
+          dispatch({ type: "FINISH", payload: { result: GameResult.WON } });
+          setTimeout(
+            () => setModal(GameResult.WON),
+            settings.totalRevealAnimationDurationMs,
+          );
+        } else if (state.turn === settings.maxTurns - 1) {
+          dispatch({ type: "FINISH", payload: { result: GameResult.LOST } });
+          setTimeout(
+            () => setModal(GameResult.LOST),
+            settings.totalRevealAnimationDurationMs,
+          );
+        }
+
+        dispatch({ type: "NEXT_TURN", payload: null });
+      }
+    },
+    [state.input, state.phase, state.solution, state.turn, state.words],
+  );
+
   useEffect(() => {
-    restartRound();
+    initialize();
+
+    document.body.style.setProperty(
+      "--reveal-animation-duration",
+      `${settings.revealAnimationDurationMs}ms`,
+    );
+
+    document.body.style.setProperty(
+      "--reveal-animation-letter-delay",
+      `${settings.revealAnimationLetterDelayMs}ms`,
+    );
   }, []);
 
   useEffect(() => {
-    restartRound();
-  }, [language]);
-
-  useEffect(() => {
-    solution && setAppState(inProgress);
-  }, [solution]);
-
-  useEffect(() => {
-    appState === inProgress &&
-      solution &&
-      document.addEventListener("keyup", handleKeyUp);
+    document.addEventListener("keyup", handleKeyUp);
     return () => {
       document.removeEventListener("keyup", handleKeyUp);
     };
-  }, [appState, input]);
+  }, [handleKeyUp]);
 
   return (
-    <div className="min-h-screen flex flex-col gap-2 dark:bg-stone-900 dark:text-white">
+    <div className="box-border flex min-h-screen flex-col gap-2 bg-background text-white">
       <Head>
         <title>Yet Another Wordle</title>
       </Head>
 
-      <header className="px-3 py-2 flex items-center border-b border-gray-700">
-        <h1 className="grow text-xl font-semi text-gray-300">
+      <header className="flex items-center border-b border-gray-700 px-3 py-2">
+        <h1 className="font-semi grow text-xl text-gray-300">
           Yet Another Wordle
         </h1>
-        <img
-          src={language === english ? "english.svg" : "polish.svg"}
-          className="max-w-[28px] border-2 border-gray-300 cursor-pointer"
-          onClick={switchLanguage}
-        />
       </header>
 
-      {solutionError && (
-        <Alert error text="Database error - please try again later." />
-      )}
-      {solutionLoading && <Spinner />}
-      {solution && (
+      {error && <Alert error text={error} />}
+      {isLoading && <Spinner />}
+      {!error && !isLoading && (
         <Wordle
-          words={words}
-          turn={turn}
-          input={input}
-          alphabet={alphabets[language]}
-          keys={keys}
+          words={state.words}
+          turn={state.turn}
+          input={state.input}
+          alphabet={alphabets[settings.language]}
+          keys={state.keyboardKeys}
+          currentLineRef={currentLineRef}
           handleKeyUp={handleKeyUp}
         />
       )}
-      {/* {solution && (
-        <h2 className="absolute bottom-0 right-0">solution: {solution}</h2>
+      {/* {state.solution && (
+        <h2 className="absolute bottom-0 right-0">
+          solution: {state.solution}
+        </h2>
       )} */}
       <AnimatePresence>
-        {modal === win && (
-          <Modal variant={win} solution={solution!} exitAction={restartRound} />
-        )}
-        {modal === lose && (
+        {modal === GameResult.WON && (
           <Modal
-            variant={lose}
-            solution={solution!}
-            exitAction={restartRound}
+            variant={GameResult.WON}
+            solution={state.solution}
+            exitAction={initialize}
+          />
+        )}
+        {modal === GameResult.LOST && (
+          <Modal
+            variant={GameResult.LOST}
+            solution={state.solution}
+            exitAction={initialize}
           />
         )}
       </AnimatePresence>
-      <ToastContainer position="bottom-center" />
+      <ToastContainer
+        position="bottom-center"
+        limit={1}
+        newestOnTop
+        autoClose={1500}
+      />
     </div>
   );
 };
