@@ -1,4 +1,4 @@
-export const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+export const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const language = "english" as const;
 const maxTurns = 6;

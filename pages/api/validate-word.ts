@@ -1,10 +1,12 @@
-import { appUrl } from "@/lib/variables";
+import { getBaseUrl } from "@/helpers/getBaseUrl";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export type ValidateWordResponse = {
   data: { valid: boolean } | null;
   error: string | null;
 };
+
+const url = getBaseUrl();
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,7 +20,7 @@ export default async function handler(
       return;
     }
 
-    const response = await fetch(`${appUrl}/dictionary.json`);
+    const response = await fetch(`${url}/dictionary.json`);
     if (!response.ok) throw new Error("Unable to fetch dictionary");
     const wordList: string[] = await response.json();
 

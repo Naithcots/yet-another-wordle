@@ -1,11 +1,7 @@
-import { appUrl } from "@/lib/variables";
+import { getBaseUrl } from "@/helpers/getBaseUrl";
 
 export default async function getSolution() {
-  if (!appUrl) {
-    throw new Error("Missing variables");
-  }
-
-  const response = await fetch(`${appUrl}/api/solution`);
+  const response = await fetch(`${getBaseUrl()}/api/solution`);
   if (!response.ok) throw new Error("Unable to fetch solution");
   const data = (await response.json()) as {
     data: string;

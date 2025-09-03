@@ -1,4 +1,4 @@
-import { appUrl } from "@/lib/variables";
+import { getBaseUrl } from "@/helpers/getBaseUrl";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export type SolutionResponse = {
@@ -6,8 +6,10 @@ export type SolutionResponse = {
   error: string | null;
 };
 
+const url = getBaseUrl();
+
 async function getSolutions(): Promise<string[]> {
-  const response = await fetch(`${appUrl}/en.json`);
+  const response = await fetch(`${url}/en.json`);
   if (!response.ok) {
     throw new Error("Unable to fetch solutions");
   }
@@ -19,10 +21,6 @@ export default async function handler(
   res: NextApiResponse<SolutionResponse>,
 ) {
   try {
-    if (!appUrl) {
-      throw new Error("Invalid request");
-    }
-
     const solutions = await getSolutions();
 
     if (solutions.length < 1) {
